@@ -1,28 +1,61 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-// Create a new order
+// Create a new order based on items in the user's cart
 exports.createOrder = async (req, res) => {
-  const { userId, totalPrice, orderItems } = req.body;
+  const { userId } = req.body;
+
+  if (!userId) {
+    return res.status(400).json({ error: "User ID is required" });
+  }
 
   try {
+    // Ambil semua cart items untuk user yang bersangkutan
+    const cart = await prisma.cart.findUnique({
+      where: { userId: Number(userId) },
+      include: {
+        cartItems: {
+          include: { product: true },
+        },
+      },
+    });
+
+    // Jika cart kosong, kirim pesan error
+    if (!cart || cart.cartItems.length === 0) {
+      return res.status(400).json({ error: "Cart is empty" });
+    }
+
+    // Hitung totalPrice berdasarkan cart items
+    const totalPrice = cart.cartItems.reduce((total, item) => {
+      return total + parseFloat(item.product.price) * item.quantity;
+    }, 0);
+
+    // Buat order baru dan tambahkan order items
     const newOrder = await prisma.order.create({
       data: {
-        userId,
-        totalPrice,
+        userId: Number(userId),
+        totalPrice: totalPrice,
         orderItems: {
-          create: orderItems.map((item) => ({
+          create: cart.cartItems.map((item) => ({
             productId: item.productId,
             quantity: item.quantity,
-            price: item.price,
+            price: parseFloat(item.product.price), // Pastikan price dalam bentuk Float
           })),
         },
       },
     });
 
+    // Hapus semua item dari cart setelah membuat order
+    await prisma.cartItem.deleteMany({
+      where: { cartId: cart.id },
+    });
+
     res.status(201).json(newOrder);
   } catch (error) {
-    res.status(500).json({ error: "Failed to create order" });
+    console.error("Error creating order:", error);
+    res
+      .status(500)
+      .json({ error: "Failed to create order", details: error.message });
   }
 };
 
