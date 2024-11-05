@@ -20,11 +20,24 @@ app.use(cors());
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Rute
-app.use("/api/v1/apikey", apiKeyRoutes); // Hapus jika tidak diperlukan
+app.use(
+  "/api/v1/apikey",
+  (req, res, next) => {
+    console.log("API key route accessed");
+    next();
+  },
+  apiKeyRoutes
+);
+// Hapus jika tidak diperlukan
 app.use("/api/v1", userRoutes);
 app.use("/api/v1", productRoutes);
 app.use("/api/v1", cartRoutes);
 app.use("/api/v1", orderRoutes);
 app.use("/api/v1", categoryRoutes);
+
+app.use((err, req, res, next) => {
+  console.error("Error encountered:", err);
+  res.status(500).json({ error: "An error occurred on the server." });
+});
 
 module.exports = app;
