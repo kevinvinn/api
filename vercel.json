@@ -8,12 +8,7 @@
   ],
   "routes": [
     {
-      "src": "/api/v1/apikey/generate",
-      "methods": ["GET"],
-      "dest": "/app.js"
-    },
-    {
-      "src": "/api/v1/(.*)",
+      "src": "/api/(.*)",
       "dest": "/app.js"
     }
   ]
