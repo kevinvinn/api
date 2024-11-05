@@ -8,8 +8,7 @@
   ],
   "routes": [
     {
-      "src": "/api/v1/apikey/products",
-      "methods": ["GET"],
+      "src": "/api/(.*)",
       "dest": "/app.js"
     }
   ]
