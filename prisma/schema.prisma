@@ -24,7 +24,7 @@ model Product {
   id          Int       @id @default(autoincrement())
   name        String
   description String
-  price       String    // Varchar for price
+  price       Int   // Varchar for price
   stok        Int
   imgUrl      String
   categoryId  Int

@@ -1,4 +1,5 @@
 // app.js
+const cors = require("cors");
 const express = require("express");
 const app = express();
 const apiKeyRoutes = require("./routes/ApiKeyRoutes");
@@ -13,6 +14,7 @@ const swaggerDocument = require("./openapi.json");
 
 // Middleware untuk parsing JSON
 app.use(express.json());
+app.use(cors());
 
 // Middleware Swagger
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
