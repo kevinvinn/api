@@ -27,4 +27,4 @@ app.use("/api/v1", cartRoutes);
 app.use("/api/v1", orderRoutes);
 app.use("/api/v1", categoryRoutes);
 
-app.listen(3000, () => console.log("Server running on port 3000"));
+module.exports = app;
