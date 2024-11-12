@@ -19,12 +19,6 @@ const swaggerDocument = require("./openapi.json");
 app.use(express.json());
 app.use(cors());
 
-app.use("/", routes);
-
-app.get("/", (req, res) => {
-  res.send("aku di sini cuy ahay 7 deh");
-});
-
 // Middleware Swagger
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
