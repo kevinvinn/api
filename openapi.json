@@ -1,669 +1,462 @@
 {
-  "openapi": "3.0.0",
+  "swagger": "2.0",
   "info": {
-    "title": "E-commerce API Documentation",
+    "title": "API Documentation",
     "version": "1.0.0",
-    "description": "API documentation for e-commerce application."
+    "description": "API Documentation with Static API Key and JWT Authentication"
   },
+  "host": "18.141.198.43",
+  "basePath": "/api/v1",
+  "schemes": ["http"],
+  "securityDefinitions": {
+    "ApiKeyAuth": {
+      "type": "apiKey",
+      "name": "header-api-key",
+      "in": "header",
+      "description": "Static API Key for authentication"
+    }
+  },
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "ApiKey",
+      "description": "Operations related to API key management"
+    },
+    {
+      "name": "Cart",
+      "description": "Operations related to Cart management"
+    },
+    {
+      "name": "Category",
+      "description": "Operations related to Category management"
+    },
+    {
+      "name": "Order",
+      "description": "Operations related to Order management"
+    },
+    {
+      "name": "Product",
+      "description": "Operations related to Product management"
+    },
+    {
+      "name": "User",
+      "description": "Operations related to User management"
+    }
+  ],
   "paths": {
-    "/user": {
-      "post": {
-        "summary": "Create a new user",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": { "type": "string" },
-                  "email": { "type": "string" },
-                  "password": { "type": "string" },
-                  "role": { "type": "string", "enum": ["USER", "ADMIN"] }
-                },
-                "required": ["name", "email", "password"]
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "User created successfully",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/User" }
-              }
-            }
-          },
-          "500": { "description": "Failed to create user" }
-        }
-      },
+    "/apikey/generate": {
       "get": {
-        "summary": "Get all users",
+        "tags": ["ApiKey"],
+        "summary": "Generate an API Key",
+        "description": "Endpoint to generate an API key",
         "responses": {
           "200": {
-            "description": "Users retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/User" }
-                }
-              }
-            }
-          },
-          "500": { "description": "Failed to retrieve users" }
+            "description": "API key generated successfully"
+          }
         }
       }
     },
-    "/user/{id}": {
-      "get": {
-        "summary": "Get user by ID",
+    "/cart/create": {
+      "post": {
+        "tags": ["Cart"],
+        "summary": "Create a new cart",
+        "security": [{ "ApiKeyAuth": [], "JWT": [] }],
+        "responses": {
+          "201": {
+            "description": "Cart created successfully"
+          }
+        }
+      }
+    },
+    "/cart": {
+      "post": {
+        "tags": ["Cart"],
+        "summary": "Add to cart",
+        "security": [{ "ApiKeyAuth": [], "JWT": [] }],
+        "responses": {
+          "200": {
+            "description": "Item added to cart successfully"
+          }
+        }
+      }
+    },
+    "/cart/item/{cartItemId}": {
+      "put": {
+        "tags": ["Cart"],
+        "summary": "Update cart item quantity",
         "parameters": [
           {
+            "name": "cartItemId",
             "in": "path",
-            "name": "id",
             "required": true,
-            "schema": { "type": "integer" }
+            "type": "string"
+          }
+        ],
+        "security": [{ "ApiKeyAuth": [], "JWT": [] }],
+        "responses": {
+          "200": {
+            "description": "Cart item quantity updated successfully"
+          }
+        }
+      }
+    },
+    "/cart/{userId}": {
+      "get": {
+        "tags": ["Cart"],
+        "summary": "Get cart by user ID",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "security": [{ "ApiKeyAuth": [], "JWT": [] }],
+        "responses": {
+          "200": {
+            "description": "Cart retrieved successfully"
+          }
+        }
+      }
+    },
+    "/cart/{cartItemId}": {
+      "delete": {
+        "tags": ["Cart"],
+        "summary": "Remove item from cart",
+        "parameters": [
+          {
+            "name": "cartItemId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "security": [{ "ApiKeyAuth": [], "JWT": [] }],
+        "responses": {
+          "200": {
+            "description": "Item removed from cart successfully"
+          }
+        }
+      }
+    },
+    "/categories": {
+      "post": {
+        "tags": ["Category"],
+        "summary": "Create a new category",
+        "security": [{ "ApiKeyAuth": [], "JWT": [] }],
+        "responses": {
+          "201": {
+            "description": "Category created successfully"
+          }
+        }
+      },
+      "get": {
+        "tags": ["Category"],
+        "summary": "Get all categories",
+        "responses": {
+          "200": {
+            "description": "Categories retrieved successfully"
+          }
+        }
+      }
+    },
+    "/categories/{id}": {
+      "get": {
+        "tags": ["Category"],
+        "summary": "Get category by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
           }
         ],
         "responses": {
           "200": {
-            "description": "User retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/User" }
-              }
+            "description": "Category retrieved successfully"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Category"],
+        "summary": "Update category by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "security": [{ "ApiKeyAuth": [], "JWT": [] }],
+        "responses": {
+          "200": {
+            "description": "Category updated successfully"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Category"],
+        "summary": "Delete category by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "security": [{ "ApiKeyAuth": [], "JWT": [] }],
+        "responses": {
+          "200": {
+            "description": "Category deleted successfully"
+          }
+        }
+      }
+    },
+    "/orders": {
+      "post": {
+        "tags": ["Order"],
+        "summary": "Create a new order",
+        "security": [{ "ApiKeyAuth": [], "JWT": [] }],
+        "responses": {
+          "201": {
+            "description": "Order created successfully"
+          }
+        }
+      }
+    },
+    "/orders/user/{userId}": {
+      "get": {
+        "tags": ["Order"],
+        "summary": "Get orders by user ID",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "security": [{ "ApiKeyAuth": [], "JWT": [] }],
+        "responses": {
+          "200": {
+            "description": "Orders retrieved successfully"
+          }
+        }
+      }
+    },
+    "/orders/{id}/status": {
+      "put": {
+        "tags": ["Order"],
+        "summary": "Update order status",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "security": [{ "ApiKeyAuth": [], "JWT": [] }],
+        "responses": {
+          "200": {
+            "description": "Order status updated successfully"
+          }
+        }
+      }
+    },
+    "/products": {
+      "post": {
+        "tags": ["Product"],
+        "summary": "Create a new product",
+        "security": [{ "ApiKeyAuth": [], "JWT": [] }],
+        "responses": {
+          "201": {
+            "description": "Product created successfully"
+          }
+        }
+      },
+      "get": {
+        "tags": ["Product"],
+        "summary": "Get all products",
+        "responses": {
+          "200": {
+            "description": "Products retrieved successfully"
+          }
+        }
+      }
+    },
+    "/products/{id}": {
+      "get": {
+        "tags": ["Product"],
+        "summary": "Get product by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product retrieved successfully"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Product"],
+        "summary": "Update product by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "security": [{ "ApiKeyAuth": [], "JWT": [] }],
+        "responses": {
+          "200": {
+            "description": "Product updated successfully"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Product"],
+        "summary": "Delete product by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "security": [{ "ApiKeyAuth": [], "JWT": [] }],
+        "responses": {
+          "200": {
+            "description": "Product deleted successfully"
+          }
+        }
+      }
+    },
+    "/users": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Create a new user",
+        "description": "Endpoint to register a new user",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "User registration data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "email": { "type": "string" },
+                "password": { "type": "string" },
+                "role": { "type": "string" }
+              },
+              "required": ["name", "email", "password", "role"]
             }
-          },
+          }
+        ],
+        "responses": {
+          "201": { "description": "User created successfully" },
+          "500": { "description": "Failed to create user" }
+        }
+      },
+      "get": {
+        "tags": ["User"],
+        "summary": "Get all users",
+        "description": "Retrieve a list of all users",
+        "security": [{ "ApiKeyAuth": [], "JWT": [] }],
+        "responses": {
+          "200": { "description": "List of users retrieved successfully" },
+          "500": { "description": "Failed to retrieve users" }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get user by ID",
+        "description": "Retrieve a user by their ID",
+        "security": [{ "ApiKeyAuth": [], "JWT": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID of the user"
+          }
+        ],
+        "responses": {
+          "200": { "description": "User retrieved successfully" },
           "404": { "description": "User not found" },
           "500": { "description": "Failed to retrieve user" }
         }
       },
       "put": {
-        "summary": "Update user by ID",
+        "tags": ["User"],
+        "summary": "Update user",
+        "description": "Update a user's information",
+        "security": [{ "ApiKeyAuth": [], "JWT": [] }],
         "parameters": [
           {
-            "in": "path",
             "name": "id",
+            "in": "path",
             "required": true,
-            "schema": { "type": "integer" }
+            "type": "integer",
+            "description": "ID of the user"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "User data to update",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "email": { "type": "string" },
+                "password": { "type": "string" },
+                "role": { "type": "string" }
+              }
+            }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": { "type": "string" },
-                  "email": { "type": "string" },
-                  "password": { "type": "string" },
-                  "role": { "type": "string", "enum": ["USER", "ADMIN"] }
-                }
-              }
-            }
-          }
-        },
         "responses": {
-          "200": {
-            "description": "User updated successfully",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/User" }
-              }
-            }
-          },
+          "200": { "description": "User updated successfully" },
           "500": { "description": "Failed to update user" }
         }
       },
       "delete": {
-        "summary": "Delete user by ID",
+        "tags": ["User"],
+        "summary": "Delete user",
+        "description": "Delete a user by their ID",
+        "security": [{ "ApiKeyAuth": [], "JWT": [] }],
         "parameters": [
           {
-            "in": "path",
             "name": "id",
+            "in": "path",
             "required": true,
-            "schema": { "type": "integer" }
+            "type": "integer",
+            "description": "ID of the user"
           }
         ],
         "responses": {
           "200": { "description": "User deleted successfully" },
           "500": { "description": "Failed to delete user" }
-        }
-      }
-    },
-    "/cart/addItem": {
-      "post": {
-        "summary": "Add product to cart",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "cartId": {
-                    "type": "integer"
-                  },
-                  "productId": {
-                    "type": "integer"
-                  },
-                  "quantity": {
-                    "type": "integer"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Item added to cart successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CartItem"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Failed to add product to cart"
-          }
-        }
-      }
-    },
-    "/cart/user/{userId}": {
-      "get": {
-        "summary": "Get cart by user ID",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "userId",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Cart details retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Cart"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Cart not found"
-          },
-          "500": {
-            "description": "Failed to retrieve cart"
-          }
-        }
-      }
-    },
-    "/cart/removeItem/{cartItemId}": {
-      "delete": {
-        "summary": "Remove item from cart",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "cartItemId",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Item removed from cart"
-          },
-          "500": {
-            "description": "Failed to remove item from cart"
-          }
-        }
-      }
-    },
-    "/category": {
-      "post": {
-        "summary": "Create a new category",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Category created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Category"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Failed to create category"
-          }
-        }
-      },
-      "get": {
-        "summary": "Get all categories",
-        "responses": {
-          "200": {
-            "description": "Categories retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Category"
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Failed to retrieve categories"
-          }
-        }
-      }
-    },
-    "/category/{id}": {
-      "get": {
-        "summary": "Get category by ID",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Category retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Category"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Category not found"
-          },
-          "500": {
-            "description": "Failed to retrieve category"
-          }
-        }
-      },
-      "put": {
-        "summary": "Update category",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Category updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Category"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Failed to update category"
-          }
-        }
-      },
-      "delete": {
-        "summary": "Delete category",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Category deleted successfully"
-          },
-          "500": {
-            "description": "Failed to delete category"
-          }
-        }
-      }
-    },
-    "/order": {
-      "post": {
-        "summary": "Create a new order",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "userId": {
-                    "type": "integer"
-                  },
-                  "totalPrice": {
-                    "type": "number"
-                  },
-                  "orderItems": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "productId": {
-                          "type": "integer"
-                        },
-                        "quantity": {
-                          "type": "integer"
-                        },
-                        "price": {
-                          "type": "number"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Order created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Order"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Failed to create order"
-          }
-        }
-      }
-    },
-    "/order/user/{userId}": {
-      "get": {
-        "summary": "Get all orders for a user",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "userId",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Orders retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Order"
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Failed to retrieve orders"
-          }
-        }
-      }
-    },
-    "/product": {
-      "post": {
-        "summary": "Create a new product",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "description": {
-                    "type": "string"
-                  },
-                  "price": {
-                    "type": "number"
-                  },
-                  "stok": {
-                    "type": "integer"
-                  },
-                  "imgUrl": {
-                    "type": "string"
-                  },
-                  "categoryId": {
-                    "type": "integer"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Product created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Product"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Failed to create product"
-          }
-        }
-      },
-      "get": {
-        "summary": "Get all products",
-        "responses": {
-          "200": {
-            "description": "Products retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Product"
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Failed to retrieve products"
-          }
-        }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "User": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "integer" },
-          "name": { "type": "string" },
-          "email": { "type": "string" },
-          "role": { "type": "string", "enum": ["USER", "ADMIN"] }
-        }
-      },
-      "CartItem": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer"
-          },
-          "cartId": {
-            "type": "integer"
-          },
-          "productId": {
-            "type": "integer"
-          },
-          "quantity": {
-            "type": "integer"
-          }
-        }
-      },
-      "Cart": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer"
-          },
-          "userId": {
-            "type": "integer"
-          },
-          "cartItems": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CartItem"
-            }
-          }
-        }
-      },
-      "Category": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer"
-          },
-          "name": {
-            "type": "string"
-          }
-        }
-      },
-      "Order": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer"
-          },
-          "userId": {
-            "type": "integer"
-          },
-          "totalPrice": {
-            "type": "number"
-          },
-          "orderItems": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/OrderItem"
-            }
-          }
-        }
-      },
-      "OrderItem": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer"
-          },
-          "orderId": {
-            "type": "integer"
-          },
-          "productId": {
-            "type": "integer"
-          },
-          "quantity": {
-            "type": "integer"
-          },
-          "price": {
-            "type": "number"
-          }
-        }
-      },
-      "Product": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer"
-          },
-          "name": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "price": {
-            "type": "number"
-          },
-          "stok": {
-            "type": "integer"
-          },
-          "imgUrl": {
-            "type": "string"
-          },
-          "categoryId": {
-            "type": "integer"
-          }
         }
       }
     }
