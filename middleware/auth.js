@@ -8,7 +8,7 @@ function verifyStaticApiKey(req, res, next) {
   if (!apiKey) {
     return res
       .status(401)
-      .json({ message: "Masukkan API Key terlebih dahulu brok😒" });
+      .json({ message: "Masukkan API Key terlebih dahulu broku😒" });
   }
 
   // Cek apakah API key valid
