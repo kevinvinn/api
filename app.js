@@ -1,4 +1,7 @@
-// app.js
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
+const PORT = process.env.PORT || 3000;
 const cors = require("cors");
 const express = require("express");
 const app = express();
@@ -46,7 +49,8 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: "An error occurred on the server." });
 });
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`Server running on port ${port}`));
+app.listen(PORT, () => {
+  console.log(`Aku tresno ${PORT}`);
+});
 
 module.exports = app;
