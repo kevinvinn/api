@@ -17,7 +17,14 @@ const swaggerDocument = require("./openapi.json");
 
 // Middleware untuk parsing JSON
 app.use(express.json());
-app.use(cors());
+// Konfigurasi CORS untuk mengizinkan localhost atau domain tertentu
+const corsOptions = {
+  origin: ["http://localhost:8080", "https://domain-frontend-anda.com"], // ganti dengan domain frontend
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization", "header-api-key"],
+};
+
+app.use(cors(corsOptions));
 
 // Middleware Swagger
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
