@@ -73,7 +73,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "userId": { "type": "string" }
+                "userId": { "type": "integer" }
               },
               "required": ["userId"]
             }
@@ -100,13 +100,13 @@
             "schema": {
               "type": "object",
               "properties": {
-                "cartId": { "type": "string" },
+                "cartId": { "type": "integer" },
                 "items": {
                   "type": "array",
                   "items": {
                     "type": "object",
                     "properties": {
-                      "productId": { "type": "string" },
+                      "productId": { "type": "integer" },
                       "quantity": { "type": "integer" }
                     },
                     "required": ["productId", "quantity"]
@@ -268,8 +268,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "name": { "type": "string" },
-                "description": { "type": "string" }
+                "name": { "type": "string" }
               }
             }
           }
@@ -313,18 +312,71 @@
             "schema": {
               "type": "object",
               "properties": {
-                "userId": { "type": "string" },
-                "items": { "type": "array", "items": { "type": "string" } },
-                "status": { "type": "string" }
+                "userId": { "type": "integer" }
               },
-              "required": ["userId", "items"]
+              "required": ["userId"]
             }
           }
         ],
         "security": [{ "ApiKeyAuth": [], "JWT": [] }],
         "responses": {
           "201": {
-            "description": "Order created successfully"
+            "description": "Order created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "userId": { "type": "integer" },
+                    "totalPrice": { "type": "number" },
+                    "orderItems": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "productId": { "type": "integer" },
+                          "quantity": { "type": "integer" },
+                          "price": { "type": "number" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request (e.g., User ID is required or Cart is empty)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": { "type": "string" }
+                  }
+                },
+                "example": { "error": "User ID is required" }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to create order due to a server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": { "type": "string" },
+                    "details": { "type": "string" }
+                  }
+                },
+                "example": {
+                  "error": "Failed to create order",
+                  "details": "Error details message"
+                }
+              }
+            }
           }
         }
       }
@@ -383,9 +435,11 @@
               "type": "object",
               "properties": {
                 "name": { "type": "string" },
+                "description": { "type": "string" },
                 "price": { "type": "number" },
-                "categoryId": { "type": "string" },
-                "stock": { "type": "integer" }
+                "stok": { "type": "integer" },
+                "imgUrl": { "type": "string" },
+                "categoryId": { "type": "string" }
               },
               "required": ["name", "price", "categoryId"]
             }
@@ -394,7 +448,46 @@
         "security": [{ "ApiKeyAuth": [], "JWT": [] }],
         "responses": {
           "201": {
-            "description": "Product created successfully"
+            "description": "Product created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "name": { "type": "string" },
+                    "description": { "type": "string" },
+                    "price": { "type": "number" },
+                    "stok": { "type": "integer" },
+                    "imgUrl": { "type": "string" },
+                    "categoryId": { "type": "string" }
+                  }
+                },
+                "example": {
+                  "id": "1",
+                  "name": "Example Product",
+                  "description": "A sample product description",
+                  "price": 100.0,
+                  "stok": 50,
+                  "imgUrl": "http://example.com/image.png",
+                  "categoryId": "1"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to create product",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": { "type": "string" }
+                  }
+                },
+                "example": { "error": "Failed to create product" }
+              }
+            }
           }
         }
       },
@@ -434,7 +527,8 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID of the product to update"
           },
           {
             "name": "body",
@@ -445,8 +539,10 @@
               "type": "object",
               "properties": {
                 "name": { "type": "string" },
+                "description": { "type": "string" },
                 "price": { "type": "number" },
-                "stock": { "type": "integer" }
+                "stok": { "type": "integer" },
+                "imgUrl": { "type": "string" }
               }
             }
           }
@@ -454,7 +550,44 @@
         "security": [{ "ApiKeyAuth": [], "JWT": [] }],
         "responses": {
           "200": {
-            "description": "Product updated successfully"
+            "description": "Product updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "name": { "type": "string" },
+                    "description": { "type": "string" },
+                    "price": { "type": "number" },
+                    "stok": { "type": "integer" },
+                    "imgUrl": { "type": "string" }
+                  }
+                },
+                "example": {
+                  "id": "1",
+                  "name": "Updated Product",
+                  "description": "Updated description",
+                  "price": 200.0,
+                  "stok": 30,
+                  "imgUrl": "http://example.com/new-image.png"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to update product",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": { "type": "string" }
+                  }
+                },
+                "example": { "error": "Failed to update product" }
+              }
+            }
           }
         }
       },
