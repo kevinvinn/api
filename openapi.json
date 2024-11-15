@@ -477,13 +477,13 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "id": { "type": "string" },
+                    "id": { "type": "integer" },
                     "name": { "type": "string" },
                     "description": { "type": "string" },
                     "price": { "type": "number" },
                     "stok": { "type": "integer" },
                     "imgUrl": { "type": "string" },
-                    "categoryId": { "type": "string" }
+                    "categoryId": { "type": "integer" }
                   }
                 },
                 "example": {
