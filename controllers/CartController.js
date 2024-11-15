@@ -38,10 +38,10 @@ exports.createCart = async (req, res) => {
 
 // Add product to cart
 exports.addToCart = async (req, res) => {
-  const { cartId, productId, quantity } = req.body;
+  const { cartId, items } = req.body;
 
   try {
-    // Cek apakah cart ada sebelum menambah item
+    // Pastikan cartId valid
     const existingCart = await prisma.cart.findUnique({
       where: { id: cartId },
     });
@@ -50,25 +50,45 @@ exports.addToCart = async (req, res) => {
       return res.status(404).json({ error: "Cart not found" });
     }
 
-    // Menambahkan item ke keranjang
-    const cartItem = await prisma.cartItem.create({
-      data: {
-        cart: {
-          connect: { id: cartId }, // Menghubungkan ke cart yang sudah ada
-        },
-        product: {
-          connect: { id: productId }, // Menghubungkan produk yang ada
-        },
-        quantity: quantity, // Menggunakan quantity yang diberikan
-      },
-    });
+    // Array untuk menyimpan item yang berhasil ditambahkan
+    const addedItems = [];
 
-    res.status(201).json(cartItem);
+    for (const item of items) {
+      const { productId, quantity } = item;
+
+      // Validasi input di setiap elemen items
+      if (!productId || !quantity) {
+        return res
+          .status(400)
+          .json({ error: "Each item must include productId and quantity" });
+      }
+
+      // Tambahkan item ke cartItem
+      const cartItem = await prisma.cartItem.create({
+        data: {
+          cart: {
+            connect: { id: cartId },
+          },
+          product: {
+            connect: { id: productId },
+          },
+          quantity: quantity,
+        },
+      });
+
+      addedItems.push(cartItem);
+    }
+
+    res.status(201).json({
+      message: "Items added to cart successfully",
+      addedItems,
+    });
   } catch (error) {
     console.error("Error adding product to cart:", error);
-    res
-      .status(500)
-      .json({ error: "Failed to add product to cart", details: error.message });
+    res.status(500).json({
+      error: "Failed to add product to cart",
+      details: error.message,
+    });
   }
 };
 

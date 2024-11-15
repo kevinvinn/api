@@ -113,13 +113,36 @@
                   }
                 }
               },
-              "required": ["userId", "items"]
+              "required": ["cartId", "items"]
             }
           }
         ],
         "responses": {
           "201": {
-            "description": "Cart created successfully"
+            "description": "Cart created successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": { "type": "string" },
+                "addedItems": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "integer" },
+                      "productId": { "type": "integer" },
+                      "quantity": { "type": "integer" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cart not found"
+          },
+          "500": {
+            "description": "Failed to add product to cart"
           }
         }
       }
