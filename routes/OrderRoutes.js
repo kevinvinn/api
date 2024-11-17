@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const OrderController = require("../controllers/OrderController");
-const authMiddleware = require("../middleware/auth"); // Import middleware
+const { authMiddleware, authorizeRole } = require("../middleware/auth");
 
 router.post("/orders", authMiddleware, OrderController.createOrder);
 router.get(

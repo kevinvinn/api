@@ -1,20 +1,38 @@
-// middleware/auth.js
-const ALLOWED_API_KEY = "ambatushopcihuy"; // Ganti dengan API key tetap
+const jwt = require("jsonwebtoken");
+const SECRET_KEY = "ambatushopcihuy"; // Ganti dengan kunci rahasia Anda
 
-function verifyStaticApiKey(req, res, next) {
-  const apiKey = req.headers["header-api-key"];
+function authMiddleware(req, res, next) {
+  const authHeader = req.headers.authorization;
 
-  // Cek apakah API key ada
-  if (!apiKey) {
-    return res.status(401).json({ message: "Masukkan API Key dulu hey😒" });
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res
+      .status(401)
+      .json({ message: "Token tidak ditemukan atau tidak valid." });
   }
 
-  // Cek apakah API key valid
-  if (apiKey !== ALLOWED_API_KEY) {
-    return res.status(403).json({ message: "API Key tidak valid" });
-  }
+  const token = authHeader.split(" ")[1];
 
-  next();
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY); // Verifikasi token
+    req.user = decoded; // Menyimpan data user ke dalam req untuk digunakan di controller
+    next();
+  } catch (error) {
+    res.status(403).json({ message: "Token tidak valid." });
+  }
 }
 
-module.exports = verifyStaticApiKey;
+function authorizeRole(role) {
+  return (req, res, next) => {
+    if (req.user.role !== role) {
+      return res
+        .status(403)
+        .json({ message: "Akses ditolak. Anda tidak memiliki izin." });
+    }
+    next();
+  };
+}
+
+module.exports = {
+  authorizeRole,
+  authMiddleware,
+};

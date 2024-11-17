@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const ProductController = require("../controllers/ProductController");
-const authMiddleware = require("../middleware/auth"); // Import middleware
+const { authMiddleware, authorizeRole } = require("../middleware/auth");
 
 router.post("/products", authMiddleware, ProductController.createProduct);
 router.get("/products", ProductController.getAllProducts);

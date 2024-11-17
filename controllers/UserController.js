@@ -1,26 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const bcrypt = require("bcrypt");
 
-// Create a new user
-exports.createUser = async (req, res) => {
-  const { name, email, password, role } = req.body;
-
-  try {
-    const newUser = await prisma.user.create({
-      data: {
-        name,
-        email,
-        password, // This should be hashed in a real scenario
-        role,
-      },
-    });
-    res.status(201).json(newUser);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to create user" });
-  }
-};
-
-// Get all users
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await prisma.user.findMany();
