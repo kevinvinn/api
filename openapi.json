@@ -168,7 +168,8 @@
                 },
                 "token": {
                   "type": "string",
-                  "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                  "maxLength": 1000
                 }
               }
             }
