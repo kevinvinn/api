@@ -12,7 +12,10 @@
       "type": "apiKey",
       "name": "Authorization",
       "in": "header",
-      "description": "JWT Bearer token for authentication. Format: Bearer {token}"
+      "description": "JWT Bearer token for authentication. Format: Bearer {token}",
+      "x-examples": {
+        "Bearer": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImVtYWlsIjoia2V2aW4xMjNAZ21haWwuY29tIiwicm9sZSI6IkNVU1RPTUVSIiwiaWF0IjoxNzMyMTExNTA5LCJleHAiOjE3MzIxMTUxMDl9.zpBU6tOFkxY19aLBuJR2LTZpPmvUvcROvjKE_cjzPSQ"
+      }
     }
   },
   "security": [
