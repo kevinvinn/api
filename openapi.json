@@ -8,7 +8,7 @@
   "host": "18.141.198.43",
   "basePath": "/api/v1",
   "securityDefinitions": {
-    "BearerAuth": {
+    "JWT": {
       "type": "apiKey",
       "name": "Authorization",
       "in": "header",
@@ -17,7 +17,7 @@
   },
   "security": [
     {
-      "BearerAuth": []
+      "JWT": []
     }
   ],
   "tags": [
