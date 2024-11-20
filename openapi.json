@@ -47,7 +47,7 @@
     }
   ],
   "paths": {
-    "/auth/register": {
+    "/register": {
       "post": {
         "tags": ["Auth"],
         "summary": "Register a new customer",
@@ -88,7 +88,7 @@
         }
       }
     },
-    "/auth/register-admin": {
+    "/register-admin": {
       "post": {
         "tags": ["Auth"],
         "summary": "Register a new admin",
@@ -129,7 +129,7 @@
         }
       }
     },
-    "/auth/login": {
+    "/login": {
       "post": {
         "tags": ["Auth"],
         "summary": "Login and get JWT token",
