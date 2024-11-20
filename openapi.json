@@ -3,27 +3,27 @@
   "info": {
     "title": "API Documentation",
     "version": "1.0.0",
-    "description": "API Documentation with Static API Key and JWT Authentication"
+    "description": "API Documentation with JWT Authentication"
   },
   "host": "18.141.198.43",
   "basePath": "/api/v1",
   "securityDefinitions": {
-    "ApiKeyAuth": {
+    "BearerAuth": {
       "type": "apiKey",
-      "name": "header-api-key",
+      "name": "Authorization",
       "in": "header",
-      "description": "Static API Key for authentication"
+      "description": "JWT Bearer token for authentication. Format: Bearer {token}"
     }
   },
   "security": [
     {
-      "ApiKeyAuth": []
+      "BearerAuth": []
     }
   ],
   "tags": [
     {
-      "name": "ApiKey",
-      "description": "Operations related to API key management"
+      "name": "Auth",
+      "description": "Operations related to Authentication (JWT)"
     },
     {
       "name": "Cart",
@@ -47,14 +47,140 @@
     }
   ],
   "paths": {
-    "/apikey/generate": {
-      "get": {
-        "tags": ["ApiKey"],
-        "summary": "Generate an API Key",
-        "description": "Endpoint to generate an API key",
+    "/auth/register": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Register a new customer",
+        "description": "Register a new user with the role of CUSTOMER.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "User registration data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "John Doe"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "john@example.com"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "password123"
+                }
+              },
+              "required": ["name", "email", "password"]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Customer registered successfully"
+          },
+          "500": {
+            "description": "Failed to register as customer"
+          }
+        }
+      }
+    },
+    "/auth/register-admin": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Register a new admin",
+        "description": "Register a new user with the role of ADMIN. This endpoint should only be used by authorized users.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "Admin registration data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "Admin Name"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "admin@example.com"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "adminpassword"
+                }
+              },
+              "required": ["name", "email", "password"]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Admin registered successfully"
+          },
+          "500": {
+            "description": "Failed to register as admin"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Login and get JWT token",
+        "description": "Authenticate a user and return a JWT token.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "User login data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "user@example.com"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "userpassword"
+                }
+              },
+              "required": ["email", "password"]
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "API key generated successfully"
+            "description": "Login successful",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Login berhasil."
+                },
+                "token": {
+                  "type": "string",
+                  "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Invalid credentials."
+          },
+          "404": {
+            "description": "Email not found"
+          },
+          "500": {
+            "description": "An error occurred during login"
           }
         }
       }
@@ -156,7 +282,7 @@
             "name": "cartItemId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "integer"
           },
           {
             "name": "body",
@@ -189,7 +315,7 @@
             "name": "userId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "integer"
           }
         ],
         "security": [{ "ApiKeyAuth": [], "JWT": [] }],
@@ -209,7 +335,7 @@
             "name": "cartItemId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "integer"
           }
         ],
         "security": [{ "ApiKeyAuth": [], "JWT": [] }],
@@ -264,7 +390,7 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "integer"
           }
         ],
         "responses": {
@@ -281,7 +407,7 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "integer"
           },
           {
             "name": "body",
@@ -311,7 +437,7 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "integer"
           }
         ],
         "security": [{ "ApiKeyAuth": [], "JWT": [] }],
@@ -350,7 +476,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "id": { "type": "string" },
+                    "id": { "type": "integer" },
                     "userId": { "type": "integer" },
                     "totalPrice": { "type": "number" },
                     "orderItems": {
@@ -413,7 +539,7 @@
             "name": "userId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "integer"
           }
         ],
         "security": [{ "ApiKeyAuth": [], "JWT": [] }],
@@ -433,7 +559,7 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "integer"
           }
         ],
         "security": [{ "ApiKeyAuth": [], "JWT": [] }],
@@ -462,7 +588,7 @@
                 "price": { "type": "number" },
                 "stok": { "type": "integer" },
                 "imgUrl": { "type": "string" },
-                "categoryId": { "type": "string" }
+                "categoryId": { "type": "integer" }
               },
               "required": ["name", "price", "categoryId"]
             }
@@ -533,7 +659,7 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "integer"
           }
         ],
         "responses": {
@@ -550,7 +676,7 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string",
+            "type": "integer",
             "description": "ID of the product to update"
           },
           {
@@ -579,7 +705,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "id": { "type": "string" },
+                    "id": { "type": "integer" },
                     "name": { "type": "string" },
                     "description": { "type": "string" },
                     "price": { "type": "number" },
@@ -622,7 +748,7 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "integer"
           }
         ],
         "security": [{ "ApiKeyAuth": [], "JWT": [] }],
@@ -634,32 +760,6 @@
       }
     },
     "/users": {
-      "post": {
-        "tags": ["User"],
-        "summary": "Create a new user",
-        "description": "Endpoint to register a new user",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "description": "User registration data",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "name": { "type": "string" },
-                "email": { "type": "string" },
-                "password": { "type": "string" },
-                "role": { "type": "string" }
-              },
-              "required": ["name", "email", "password", "role"]
-            }
-          }
-        ],
-        "responses": {
-          "201": { "description": "User created successfully" },
-          "500": { "description": "Failed to create user" }
-        }
-      },
       "get": {
         "tags": ["User"],
         "summary": "Get all users",
